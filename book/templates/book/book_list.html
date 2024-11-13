@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>单词书列表</title>
+</head>
+<body>
+    <h1>单词书列表</h1>
+
+    <h2>单词书名称及详情</h2>
+    <ul>
+        {% for book in book_list %}
+            <li>
+                <strong>书名：</strong>{{ book.bk_name }} <br>
+                <strong>书籍 ID：</strong>{{ book.bk_id }} <br>
+                <strong>作者：</strong>{{ book.bk_author }} <br>
+                <strong>出版社：</strong>{{ book.bk_publisher }} <br>
+                <strong>版本：</strong>{{ book.bk_version }} <br>
+                <strong>评论：</strong>{{ book.bk_comment }} <br>
+                <hr>
+            </li>
+        {% empty %}
+            <li>没有找到任何单词书。</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
