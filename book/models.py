@@ -21,6 +21,7 @@ class Book(models.Model):
 
 
 class Word(models.Model):
+    
     vc_id = models.CharField(max_length=255, unique=True)
     vc_vocabulary = models.CharField(max_length=255)
     vc_phonetic_uk = models.CharField(max_length=255)
@@ -28,7 +29,7 @@ class Word(models.Model):
     vc_frequency = models.FloatField()
     vc_difficulty = models.IntegerField()
     vc_acknowledge_rate = models.FloatField()
-
+    
     def __str__(self):
         return self.vc_vocabulary
 

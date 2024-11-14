@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>单词列表 - {{ book.bk_name }}</title>
+</head>
+<body>
+    <h1>
+        <a href="{% url 'book_list' %}">单词书列表</a> - {{ book.bk_name }}
+    </h1>
+
+    <ul>
+        {% for word in page_obj %}
+            <li>{{ word.vc_vocabulary }}</li>
+        {% endfor %}
+    </ul>
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="{% url 'word_list' index=index %}?page={{ page_obj.previous_page_number }}">« 上一页</a>
+            {% endif %}
+    
+            <span class="current">
+                第 {{ page_obj.number }} 页，共 {{ page_obj.paginator.num_pages }} 页
+            </span>
+    
+            {% if page_obj.has_next %}
+                <a href="{% url 'word_list' index=index %}?page={{ page_obj.next_page_number }}">下一页 »</a>
+            {% endif %}
+        </span>
+    </div>
+    
+</body>
+</html>
