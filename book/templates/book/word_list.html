@@ -10,11 +10,31 @@
         <a href="{% url 'book_list' %}">单词书列表</a> - {{ book.bk_name }}
     </h1>
 
-    <ul>
-        {% for word in page_obj %}
-            <li>{{ word.vc_vocabulary }}</li>
+    <ol>
+        {% for word_detail in page_obj %}
+            <li>
+                <strong>{{ word_detail.word.vc_vocabulary }}</strong> <br>
+
+                <!-- 显示英式和美式音标 -->
+                <em>英音: {{ word_detail.phonetic_uk }}</em> <br>
+                <em>美音: {{ word_detail.phonetic_us }}</em> <br>
+
+                <!-- 显示单词的翻译 -->
+                <strong>中文翻译：</strong>
+                <ul>
+                    {% if word_detail.translations %}
+                        {% for translation in word_detail.translations %}
+                            <li>{{ translation }}</li>
+                        {% endfor %}
+                    {% else %}
+                        <li>暂无翻译</li>
+                    {% endif %}
+                </ul>
+            </li>
+        {% empty %}
+            <li>没有单词信息。</li>
         {% endfor %}
-    </ul>
+    </ol>
 
     <div class="pagination">
         <span class="step-links">
@@ -31,6 +51,6 @@
             {% endif %}
         </span>
     </div>
-    
+
 </body>
 </html>

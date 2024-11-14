@@ -3,7 +3,7 @@ from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.cache import cache_page
 
-from .models import Book, RelationBookWord
+from .models import Book, RelationBookWord, Word, WordTranslation
 
 
 @csrf_protect
@@ -66,9 +66,21 @@ def word_list(request, index):
     relation_book_word_list = RelationBookWord.objects.filter(bv_book_id=book)
     words = [relation.bv_voc_id for relation in relation_book_word_list]
 
+    # more detail
+    word_details = []
+    for word in words:
+        translations = WordTranslation.objects.filter(word=word)
+        translation_list = [t.translation for t in translations]
+        word_details.append({
+            'word': word,
+            'phonetic_uk': word.vc_phonetic_uk,
+            'phonetic_us': word.vc_phonetic_us,
+            'translations': translation_list
+        })
+
     # Pagination
     page = request.GET.get("page", 1)  # default page 1
-    paginator = Paginator(words, 20)
+    paginator = Paginator(word_details, 20)
     page_obj = paginator.get_page(page)
 
     return render(request, "book/word_list.html", {"book": book, "page_obj": page_obj, "index": index + 1})
