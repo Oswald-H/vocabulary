@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="zh">
 
@@ -5,24 +7,105 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>单词书列表</title>
+    <link rel="stylesheet" href="{% static 'plugins/bootstrap-3.4.1/css/bootstrap.css' %}"/>
+    <link rel="stylesheet" href="{% static 'plugins/font-awesome-4.7.0/css/font-awesome.css' %}"/>
+    <style>
+        .header {
+            text-align: center;
+            font-size: large;
+            font-weight: 700;
+            padding: 15px 0 15px 0;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            box-shadow: 0 0 8px #c3c3c373;
+        }
+
+        .cell {
+            margin-top: 40px;
+            margin-left: 18px;
+            margin-right: 18px;
+            width: 280px;
+            height: 150px;
+            display: inline-block;
+
+            border-radius: 10px;
+            box-shadow: 2px 2px 8px #c3c3c373;
+        }
+
+        a{
+            text-decoration: none;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>单词书列表</h1>
-    <ul>
+<nav class="navbar navbar-default" style="box-shadow: 1px 1px 2px #c3c3c373;background-color: white;">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">
+
+            </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#">
+                        <i class="fa fa-home fa-2x" aria-hidden="true"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fa fa-user-circle fa-2x" aria-hidden="true"></i>
+                    </a>
+                </li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+
+<div class="container">
+    <div class="col-md-10 col-md-offset-1 header">
+        <i class="fa fa-th" aria-hidden="true"></i>单词书列表
+    </div>
+
+    <div style="margin-left: 92px;margin-right: 92px;">
         {% for book in book_list %}
-        <li>
-            <strong>书名：</strong>{{ book.bk_name|safe }} <br>
 
-            <!-- 添加链接到单词列表，index 是循环的顺序从 1 开始 -->
-            <a href="{% url 'word_list' index=forloop.counter %}?page=1">{{ book.bk_name }}</a>
-            <hr>
-        </li>
-        {% empty %}
-        <li> 没有找到单词书。<br>
-        </li>
+            <a href="{% url 'word_list' index=forloop.counter %}?page=1">
+                <div class="cell" style="padding: 20px;">
+                    <div style="width: 100%;height: 100%">
+                        <div class="word clearfix" style="display: inline-block;float:right;width: 120px;color: black">
+                            <div style="text-align: center;line-height: 20px;font-size: 20px">书名</div>
+                            <div style="line-height: 20px;margin-top: 10px">{{ book.bk_name|safe }}</div>
+                        </div>
+
+                        <div class="image clearfix" style="display: inline-block;float: left">
+                            <!-- <img src="static/img/{{forloop.counter}}.jpg" style="height: 110px"/> -->
+                            <img src="{% static 'img/' %}{{ forloop.counter }}.jpg" style="height: 110px"/>
+                        </div>
+                    </div>
+                </div>
+            </a>
+
+            {% empty %}
+            <div>没有找到单词书</div>
         {% endfor %}
-    </ul>
+    </div>
+</div>
+<script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+<script src="{% static 'plugins/bootstrap-3.4.1/js/bootstrap.js' %}"></script>
 </body>
-
 </html>

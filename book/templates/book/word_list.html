@@ -1,56 +1,163 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>单词列表 - {{ book.bk_name }}</title>
+    <link rel="stylesheet" href="{% static 'plugins/bootstrap-3.4.1/css/bootstrap.css' %}"/>
+    <link rel="stylesheet" href="{% static 'plugins/font-awesome-4.7.0/css/font-awesome.css' %}"/>
+    <style>
+        .header {
+            display: inline-block;
+            padding: 15px 15px 15px 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 8px #c3c3c373;
+        }
+
+        .wordTable {
+            margin-top: 20px;
+            margin-left: 96px;
+            margin-right: 96px;
+            box-shadow: 0 0 10px #c3c3c373;
+            border-radius: 10px;
+        }
+        a{
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
-    <h1>
-        <a href="{% url 'book_list' %}">单词书列表</a> - {{ book.bk_name }}
-    </h1>
 
-    <ol>
-        {% for word_detail in page_obj %}
-            <li>
-                <strong>{{ word_detail.word.vc_vocabulary }}</strong> <br>
+<nav class="navbar navbar-default" style="box-shadow: 1px 1px 2px #c3c3c373;background-color: white;">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">
 
-                <!-- 显示英式和美式音标 -->
-                <em>英音: {{ word_detail.phonetic_uk }}</em> <br>
-                <em>美音: {{ word_detail.phonetic_us }}</em> <br>
+            </a>
+        </div>
 
-                <!-- 显示单词的翻译 -->
-                <strong>中文翻译：</strong>
-                <ul>
-                    {% if word_detail.translations %}
-                        {% for translation in word_detail.translations %}
-                            <li>{{ translation }}</li>
-                        {% endfor %}
-                    {% else %}
-                        <li>暂无翻译</li>
-                    {% endif %}
-                </ul>
-            </li>
-        {% empty %}
-            <li>没有单词信息。</li>
-        {% endfor %}
-    </ol>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#">
+                        <i class="fa fa-home fa-2x" aria-hidden="true"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fa fa-user-circle fa-2x" aria-hidden="true"></i>
+                    </a>
+                </li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
 
-    <div class="pagination">
-        <span class="step-links">
-            {% if page_obj.has_previous %}
-                <a href="{% url 'word_list' index=index %}?page={{ page_obj.previous_page_number }}">« 上一页</a>
-            {% endif %}
-    
-            <span class="current">
-                第 {{ page_obj.number }} 页，共 {{ page_obj.paginator.num_pages }} 页
-            </span>
-    
-            {% if page_obj.has_next %}
-                <a href="{% url 'word_list' index=index %}?page={{ page_obj.next_page_number }}">下一页 »</a>
-            {% endif %}
-        </span>
+<div class="container clearfix">
+    <div class="col-md-10 col-md-offset-1 header">
+        <a href="{% url 'book_list' %}" style="color: #505050">
+            <i class="fa fa-reply" aria-hidden="true"></i>
+        </a>
     </div>
+</div>
+
+<div class="container">
+    <div class="wordTable">
+        <table class="table table-hover" id="myTable">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>单词</th>
+                <th>释义</th>
+            </tr>
+            </thead>
+            {% for word_detail in page_obj %}
+                <tbody>
+                <tr>
+                    <th scope="row" id="number" style="line-height: 70px"></th>
+                    <td>
+                        <div style="font-size: large;color: #485fc7;">
+                            {{ word_detail.word.vc_vocabulary }}
+                        </div>
+                        <div>
+                            音标: {{ word_detail.phonetic_uk }}
+                        </div>
+                        <!-- <div>
+                            美音: {{ word_detail.phonetic_us }}
+                        </div> -->
+                    </td>
+                    <td>
+                        {% if word_detail.translations %}
+                            {% for translation in word_detail.translations %}
+                                <div>
+                                    {{ translation }}
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div>
+                                暂无翻译
+                            </div>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>没有单词信息</tr>
+                </tbody>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+<div class="container">
+    <div class="bs-example" data-example-id="simple-button-group">
+        <div class="btn-group clearfix" role="group" aria-label="Basic example" style="display: inline-block;float: right;margin-right: 96px">
+            {% if page_obj.has_previous %}
+                <a href="{% url 'word_list' index=index %}?page={{ page_obj.previous_page_number }}">
+                    <button type="button" class="btn btn-default">
+                        上一页
+                    </button>
+                </a>
+            {% endif %}
+                <span class="current">
+                    <button type="button" class="btn btn-default">
+                        第 {{ page_obj.number }} 页，共 {{ page_obj.paginator.num_pages }} 页
+                    </button>
+                </span>
+            {% if page_obj.has_next %}
+                <a href="{% url 'word_list' index=index %}?page={{ page_obj.next_page_number }}">
+                    <button type="button" class="btn btn-default">
+                        下一页
+                    </button>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+<script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+<script src="{% static 'plugins/bootstrap-3.4.1/js/bootstrap.js' %}"></script>
+
+<script>
+    $(function () {
+        const table = document.getElementById('myTable');
+        const rows = table.getElementsByTagName('tr');
+        for (let i = 1; i < rows.length; i++) {
+            rows[i].cells[0].innerText = i;
+        }
+    })
+</script>
 
 </body>
 </html>

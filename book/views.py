@@ -74,7 +74,7 @@ def word_list(request, index):
         word_details.append({
             'word': word,
             'phonetic_uk': word.vc_phonetic_uk,
-            'phonetic_us': word.vc_phonetic_us,
+            # 'phonetic_us': word.vc_phonetic_us,
             'translations': translation_list
         })
 
