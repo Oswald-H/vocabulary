@@ -5,6 +5,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>单词列表 - {{ book.bk_name }}</title>
     <link rel="stylesheet" href="{% static 'plugins/bootstrap-3.4.1/css/bootstrap.css' %}"/>
     <link rel="stylesheet" href="{% static 'plugins/font-awesome-4.7.0/css/font-awesome.css' %}"/>
@@ -22,9 +24,6 @@
             margin-right: 96px;
             box-shadow: 0 0 10px #c3c3c373;
             border-radius: 10px;
-        }
-        a{
-            text-decoration: none;
         }
     </style>
 </head>
@@ -69,6 +68,9 @@
         <a href="{% url 'book_list' %}" style="color: #505050">
             <i class="fa fa-reply" aria-hidden="true"></i>
         </a>
+    </div>
+    <div>
+        
     </div>
 </div>
 
