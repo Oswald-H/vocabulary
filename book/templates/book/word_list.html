@@ -25,6 +25,19 @@
             box-shadow: 0 0 10px #c3c3c373;
             border-radius: 10px;
         }
+
+        .header .is-bg {
+            border-radius: 10px;
+            font-size: medium;
+            border: 1px solid white;
+            justify-content: flex-end;
+        }
+        .header .is-dark{
+            background-color: #e3bc8a;
+        }
+        .is-white{
+            background-color: white;
+        }
     </style>
 </head>
 <body>
@@ -64,13 +77,20 @@
 </nav>
 
 <div class="container clearfix">
-    <div class="col-md-10 col-md-offset-1 header">
-        <a href="{% url 'book_list' %}" style="color: #505050">
-            <i class="fa fa-reply" aria-hidden="true"></i>
-        </a>
-    </div>
-    <div>
-        
+    <div class="col-md-10 col-md-offset-1 header" style="justify-content: space-between;display: flex;padding: 10px 10px 10px 15px;">
+        <div class="fa-stack fa-lg" style="justify-content: center;">
+            <a href="{% url 'book_list' %}" style="color: #505050;">
+                <i class="fa fa-reply" aria-hidden="true" ></i>
+            </a>
+        </div>
+        <div style="display: flex;">
+            <button class="is-button is-bg is-dark" style="width: 58px; margin-left: 5px; padding: 0.3rem 0.8rem;" onclick="clickWord(this)">单词
+            </button>
+            <button class="is-button is-bg is-dark" style="width: 58px; margin-left: 5px; padding: 0.3rem 0.8rem;" onclick="clickPhonetic(this)">音标
+            </button>
+            <button class="is-button is-bg is-dark" style="width: 58px; margin-left: 5px; padding: 0.3rem 0.8rem;" onclick="clickInterpretation(this)">释义
+            </button>
+        </div>
     </div>
 </div>
 
@@ -89,17 +109,17 @@
                 <tr>
                     <th scope="row" id="number" style="line-height: 70px"></th>
                     <td>
-                        <div style="font-size: large;color: #485fc7;">
+                        <div class="is-word" style="font-size: large;color: #485fc7;">
                             {{ word_detail.word.vc_vocabulary }}
                         </div>
-                        <div>
+                        <div class="is-phonetic">
                             音标: {{ word_detail.phonetic_uk }}
                         </div>
                         <!-- <div>
                             美音: {{ word_detail.phonetic_us }}
                         </div> -->
                     </td>
-                    <td>
+                    <td class="is-interpretation">
                         {% if word_detail.translations %}
                             {% for translation in word_detail.translations %}
                                 <div>
@@ -123,7 +143,8 @@
 
 <div class="container">
     <div class="bs-example" data-example-id="simple-button-group">
-        <div class="btn-group clearfix" role="group" aria-label="Basic example" style="display: inline-block;float: right;margin-right: 96px">
+        <div class="btn-group clearfix" role="group" aria-label="Basic example"
+             style="display: inline-block;float: right;margin-right: 96px">
             {% if page_obj.has_previous %}
                 <a href="{% url 'word_list' index=index %}?page={{ page_obj.previous_page_number }}">
                     <button type="button" class="btn btn-default">
@@ -131,7 +152,7 @@
                     </button>
                 </a>
             {% endif %}
-                <span class="current">
+            <span class="current">
                     <button type="button" class="btn btn-default">
                         第 {{ page_obj.number }} 页，共 {{ page_obj.paginator.num_pages }} 页
                     </button>
@@ -152,6 +173,7 @@
 <script src="{% static 'plugins/bootstrap-3.4.1/js/bootstrap.js' %}"></script>
 
 <script>
+    //将数据插入表格
     $(function () {
         const table = document.getElementById('myTable');
         const rows = table.getElementsByTagName('tr');
@@ -159,6 +181,43 @@
             rows[i].cells[0].innerText = i;
         }
     })
+    
+    //点击隐藏单词
+    function clickWord(self){
+        const isHide = $(self).hasClass("is-dark");
+        if(isHide){
+            $(self).removeClass("is-dark");//背景色删除
+            $(self).addClass("is-white");//背景色改成白色
+            $(".is-word").hide();//隐藏表格的文本
+        }else{
+            $(self).addClass("is-dark");//背景色添加
+            $(".is-word").show();//显示表格的文本
+        }
+    }
+    //点击隐藏音标
+    function clickPhonetic(self){
+        const isHide = $(self).hasClass("is-dark");
+        if(isHide){
+            $(self).removeClass("is-dark");
+            $(self).addClass("is-white");
+            $(".is-phonetic").hide()
+        }else{
+            $(self).addClass("is-dark")
+            $(".is-phonetic").show();
+        }
+    }
+    //点击隐藏释义
+    function clickInterpretation(self){
+        const isHide = $(self).hasClass("is-dark");
+        if(isHide){
+            $(self).removeClass("is-dark");
+            $(self).addClass("is-white");
+            $(".is-interpretation").hide();
+        }else{
+            $(self).addClass("is-dark")
+            $(".is-interpretation").show();
+        }
+    }
 </script>
 
 </body>
