@@ -5,8 +5,6 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>单词书列表</title>
     <link rel="stylesheet" href="{% static 'plugins/bootstrap-3.4.1/css/bootstrap.css' %}"/>
@@ -24,6 +22,11 @@
 
             box-shadow: 0 0 8px #c3c3c373;
         }
+        
+        .book{
+            margin-left: 92px;
+            margin-right: 92px;
+        }
 
         .cell {
             margin-top: 40px;
@@ -39,6 +42,16 @@
 
         a{
             text-decoration: none;
+        }
+        @media (max-width: 500px) {
+            .book{
+                margin-left: 0;
+                margin-right: 0;
+            }
+            .container{
+                padding-left: 0;
+                padding-right: 0;
+            }
         }
     </style>
 </head>
@@ -83,7 +96,7 @@
         <i class="fa fa-th" aria-hidden="true"></i>单词书列表
     </div>
 
-    <div style="margin-left: 92px;margin-right: 92px;">
+    <div class="book">
         {% for book in book_list %}
 
             <a href="{% url 'word_list' index=forloop.counter %}?page=1">

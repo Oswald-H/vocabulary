@@ -4,8 +4,6 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>单词列表 - {{ book.bk_name }}</title>
     <link rel="stylesheet" href="{% static 'plugins/bootstrap-3.4.1/css/bootstrap.css' %}"/>
@@ -37,6 +35,24 @@
         }
         .is-white{
             background-color: white;
+        }
+        .skip{
+            display: inline-block;
+            float: right;
+            margin-right: 0;
+        }
+        @media (max-width: 500px) {
+            .wordTable{
+               margin-left: 0;
+               margin-right: 0;
+            }
+            .container{
+                padding-left: 0;
+                padding-right: 0;
+            }
+            .skip{
+                margin-right: 0;
+            }
         }
     </style>
 </head>
@@ -143,8 +159,7 @@
 
 <div class="container">
     <div class="bs-example" data-example-id="simple-button-group">
-        <div class="btn-group clearfix" role="group" aria-label="Basic example"
-             style="display: inline-block;float: right;margin-right: 96px">
+        <div class="btn-group clearfix skip" role="group" aria-label="Basic example">
             {% if page_obj.has_previous %}
                 <a href="{% url 'word_list' index=index %}?page={{ page_obj.previous_page_number }}">
                     <button type="button" class="btn btn-default">
