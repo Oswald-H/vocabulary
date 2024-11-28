@@ -22,8 +22,8 @@
 
             box-shadow: 0 0 8px #c3c3c373;
         }
-        
-        .book{
+
+        .book {
             margin-left: 92px;
             margin-right: 92px;
         }
@@ -40,15 +40,17 @@
             box-shadow: 2px 2px 8px #c3c3c373;
         }
 
-        a{
+        a {
             text-decoration: none;
         }
+
         @media (max-width: 500px) {
-            .book{
+            .book {
                 margin-left: 0;
                 margin-right: 0;
             }
-            .container{
+
+            .container {
                 padding-left: 0;
                 padding-right: 0;
             }
@@ -79,6 +81,15 @@
                 <li>
                     <a href="#">
                         <i class="fa fa-home fa-2x" aria-hidden="true"></i>
+                    </a>
+                </li>
+                <!-- 跳转到AI界面 -->
+                 <li>
+                    <a href="#">
+                        <span class="fa-stack fa-1x">
+                        <i class="fa fa-circle fa-stack-2x" aria-hidden="true"></i>
+                            <i class="fa fa-stack-1x" style="color: white;">AI</i> 
+                        </span>
                     </a>
                 </li>
                 <li>
@@ -115,7 +126,7 @@
                 </div>
             </a>
 
-            {% empty %}
+        {% empty %}
             <div>没有找到单词书</div>
         {% endfor %}
     </div>

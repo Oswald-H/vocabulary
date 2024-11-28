@@ -30,27 +30,33 @@
             border: 1px solid white;
             justify-content: flex-end;
         }
-        .header .is-dark{
+
+        .header .is-dark {
             background-color: #e3bc8a;
         }
-        .is-white{
+
+        .is-white {
             background-color: white;
         }
-        .skip{
+
+        .skip {
             display: inline-block;
             float: right;
-            margin-right: 0;
+            margin-right: 96px;
         }
+
         @media (max-width: 500px) {
-            .wordTable{
-               margin-left: 0;
-               margin-right: 0;
+            .wordTable {
+                margin-left: 0;
+                margin-right: 0;
             }
-            .container{
+
+            .container {
                 padding-left: 0;
                 padding-right: 0;
             }
-            .skip{
+
+            .skip {
                 margin-right: 0;
             }
         }
@@ -82,6 +88,15 @@
                         <i class="fa fa-home fa-2x" aria-hidden="true"></i>
                     </a>
                 </li>
+                <!-- 跳转到AI界面 -->
+                 <li>
+                    <a href="#">
+                        <span class="fa-stack fa-1x">
+                        <i class="fa fa-circle fa-stack-2x" aria-hidden="true"></i>
+                            <i class="fa fa-stack-1x" style="color: white;">AI</i> 
+                        </span>
+                    </a>
+                </li>
                 <li>
                     <a href="#">
                         <i class="fa fa-user-circle fa-2x" aria-hidden="true"></i>
@@ -93,18 +108,22 @@
 </nav>
 
 <div class="container clearfix">
-    <div class="col-md-10 col-md-offset-1 header" style="justify-content: space-between;display: flex;padding: 10px 10px 10px 15px;">
+    <div class="col-md-10 col-md-offset-1 header"
+         style="justify-content: space-between;display: flex;padding: 10px 10px 10px 15px;">
         <div class="fa-stack fa-lg" style="justify-content: center;">
             <a href="{% url 'book_list' %}" style="color: #505050;">
-                <i class="fa fa-reply" aria-hidden="true" ></i>
+                <i class="fa fa-reply" aria-hidden="true"></i>
             </a>
         </div>
         <div style="display: flex;">
-            <button class="is-button is-bg is-dark" style="width: 58px; margin-left: 5px; padding: 0.3rem 0.8rem;" onclick="clickWord(this)">单词
+            <button class="is-button is-bg is-dark" style="width: 58px; margin-left: 5px; padding: 0.3rem 0.8rem;"
+                    onclick="clickWord(this)">单词
             </button>
-            <button class="is-button is-bg is-dark" style="width: 58px; margin-left: 5px; padding: 0.3rem 0.8rem;" onclick="clickPhonetic(this)">音标
+            <button class="is-button is-bg is-dark" style="width: 58px; margin-left: 5px; padding: 0.3rem 0.8rem;"
+                    onclick="clickPhonetic(this)">音标
             </button>
-            <button class="is-button is-bg is-dark" style="width: 58px; margin-left: 5px; padding: 0.3rem 0.8rem;" onclick="clickInterpretation(this)">释义
+            <button class="is-button is-bg is-dark" style="width: 58px; margin-left: 5px; padding: 0.3rem 0.8rem;"
+                    onclick="clickInterpretation(this)">释义
             </button>
         </div>
     </div>
@@ -196,39 +215,41 @@
             rows[i].cells[0].innerText = i;
         }
     })
-    
+
     //点击隐藏单词
-    function clickWord(self){
+    function clickWord(self) {
         const isHide = $(self).hasClass("is-dark");
-        if(isHide){
+        if (isHide) {
             $(self).removeClass("is-dark");//背景色删除
             $(self).addClass("is-white");//背景色改成白色
             $(".is-word").hide();//隐藏表格的文本
-        }else{
+        } else {
             $(self).addClass("is-dark");//背景色添加
             $(".is-word").show();//显示表格的文本
         }
     }
+
     //点击隐藏音标
-    function clickPhonetic(self){
+    function clickPhonetic(self) {
         const isHide = $(self).hasClass("is-dark");
-        if(isHide){
+        if (isHide) {
             $(self).removeClass("is-dark");
             $(self).addClass("is-white");
             $(".is-phonetic").hide()
-        }else{
+        } else {
             $(self).addClass("is-dark")
             $(".is-phonetic").show();
         }
     }
+
     //点击隐藏释义
-    function clickInterpretation(self){
+    function clickInterpretation(self) {
         const isHide = $(self).hasClass("is-dark");
-        if(isHide){
+        if (isHide) {
             $(self).removeClass("is-dark");
             $(self).addClass("is-white");
             $(".is-interpretation").hide();
-        }else{
+        } else {
             $(self).addClass("is-dark")
             $(".is-interpretation").show();
         }
