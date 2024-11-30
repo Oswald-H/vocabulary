@@ -1,3 +1,4 @@
+
 {% load static %}
 
 <!DOCTYPE html>
@@ -10,125 +11,138 @@
     <link rel="stylesheet" href="{% static 'plugins/bootstrap-3.4.1/css/bootstrap.css' %}"/>
     <link rel="stylesheet" href="{% static 'plugins/font-awesome-4.7.0/css/font-awesome.css' %}"/>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+        }
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+        }
         .header {
             text-align: center;
-            font-size: large;
-            font-weight: 700;
-            padding: 15px 0 15px 0;
-            border-radius: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            box-shadow: 0 0 8px #c3c3c373;
+            font-size: 24px;
+            font-weight: bold;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-
+        .book-container {
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 外部阴影 */
+            border-radius: 10px;
+            background-color: #ffffff;
+        }
         .book {
-            margin-left: 92px;
-            margin-right: 92px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 0 15px;
         }
-
         .cell {
-            margin-top: 40px;
-            margin-left: 18px;
-            margin-right: 18px;
+            margin: 15px;
             width: 280px;
-            height: 150px;
-            display: inline-block;
-
-            border-radius: 10px;
-            box-shadow: 2px 2px 8px #c3c3c373;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 阴影效果 */
+            overflow: hidden;
+            background-color: #ffffff;
+            transition: transform 0.3s, box-shadow 0.3s; /* 动效 */
+            display: flex; /* flex布局 */
+            align-items: center; /* 垂直居中 */
+            padding: 10px; /* 内边距 */
+            word-wrap: break-word; /* 单词换行 */
         }
-
+        .cell:hover {
+            transform: scale(1.05); /* 放大效果 */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* 悬停阴影效果 */
+        }
+        .cell img {
+            width: 100px; /* 图片宽度 */
+            height: auto; /* 保持比例 */
+            border-radius: 8px 0 0 8px; /* 圆角 */
+        }
+        .cell .content {
+            padding-left: 10px; /* 图片和文字间距 */
+            flex-grow: 1; /* 占据剩余空间 */
+        }
+        .cell .book-title {
+            font-size: 16px; /* 书名大小 */
+            color: #333;
+            text-align: left; /* 左对齐 */
+            margin-top: 10px;
+            white-space: normal; /* 换行 */
+            overflow: hidden; /* 超出隐藏 */
+            text-overflow: ellipsis; /* 省略号 */
+        }
         a {
-            text-decoration: none;
+            text-decoration: none; /* 去掉下划线 */
+            color: inherit; /* 继承颜色 */
         }
-
         @media (max-width: 500px) {
             .book {
-                margin-left: 0;
-                margin-right: 0;
+                padding: 0; /* 小屏幕调整 */
             }
-
-            .container {
-                padding-left: 0;
-                padding-right: 0;
+            .cell img {
+                width: 80px; /* 小屏幕图片宽度 */
+            }
+            .cell .book-title {
+                font-size: 14px; /* 小屏幕书名大小 */
             }
         }
     </style>
 </head>
 
 <body>
-<nav class="navbar navbar-default" style="box-shadow: 1px 1px 2px #c3c3c373;background-color: white;">
-    <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">
-
-            </a>
-        </div>
-
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav navbar-right">
-                <li>
-                    <a href="#">
-                        <i class="fa fa-home fa-2x" aria-hidden="true"></i>
-                    </a>
-                </li>
-                <!-- 跳转到AI界面 -->
-                 <li>
-                    <a href="#">
-                        <span class="fa-stack fa-1x">
+<nav class="navbar navbar-default">
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+            <li>
+                <a href="#" aria-label="主页">
+                    <i class="fa fa-home fa-2x" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <a href="#" aria-label="AI助手">
+                    <span class="fa-stack fa-1x">
                         <i class="fa fa-circle fa-stack-2x" aria-hidden="true"></i>
-                            <i class="fa fa-stack-1x" style="color: white;">AI</i> 
-                        </span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        <i class="fa fa-user-circle fa-2x" aria-hidden="true"></i>
-                    </a>
-                </li>
-            </ul>
-        </div><!-- /.navbar-collapse -->
-    </div><!-- /.container-fluid -->
+                        <i class="fa fa-stack-1x" style="color: white;">AI</i>
+                    </span>
+                </a>
+            </li>
+            <li>
+                <a href="#" aria-label="用户中心">
+                    <i class="fa fa-user-circle fa-2x" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
 </nav>
 
 <div class="container">
-    <div class="col-md-10 col-md-offset-1 header">
-        <i class="fa fa-th" aria-hidden="true"></i>单词书列表
+    <div class="header">
+        <i class="fa fa-th" aria-hidden="true"></i> 单词书列表
     </div>
 
-    <div class="book">
-        {% for book in book_list %}
-
-            <a href="{% url 'word_list' index=forloop.counter %}?page=1">
-                <div class="cell" style="padding: 20px;">
-                    <div style="width: 100%;height: 100%">
-                        <div class="word clearfix" style="display: inline-block;float:right;width: 120px;color: black">
-                            <div style="text-align: center;line-height: 20px;font-size: 20px">书名</div>
-                            <div style="line-height: 20px;margin-top: 10px">{{ book.bk_name|safe }}</div>
-                        </div>
-
-                        <div class="image clearfix" style="display: inline-block;float: left">
-                            <!-- <img src="static/img/{{forloop.counter}}.jpg" style="height: 110px"/> -->
-                            <img src="{% static 'img/' %}{{ forloop.counter }}.jpg" style="height: 110px"/>
+    <div class="book-container" style="min-height: 525px;"> <!-- 最小高度 -->
+        <div class="book">
+            {% for book in book_list %}
+                <a href="{% url 'word_list' index=forloop.counter %}?page=1" class="book-link">
+                    <div class="cell">
+                        <img src="{% static 'img/' %}{{ forloop.counter }}.jpg" alt="{{ book.bk_name }} 封面" class="book-cover"/>
+                        <div style="margin-left: 20px; display: flex; flex-direction: column; justify-content: center; text-align: left;">
+                            <div style="line-height: 24px; font-size: 24px; font-weight: bold;">{{ book.bk_name|safe }}</div>
                         </div>
                     </div>
-                </div>
-            </a>
-
-        {% empty %}
-            <div>没有找到单词书</div>
-        {% endfor %}
+                </a>
+            {% empty %}
+                <div class="cell" style="text-align: center; font-size: 20px; color: #999;">没有找到单词书</div>
+            {% endfor %}
+        </div>
     </div>
 </div>
 <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>

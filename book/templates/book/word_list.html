@@ -9,252 +9,189 @@
     <link rel="stylesheet" href="{% static 'plugins/bootstrap-3.4.1/css/bootstrap.css' %}"/>
     <link rel="stylesheet" href="{% static 'plugins/font-awesome-4.7.0/css/font-awesome.css' %}"/>
     <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+        }
         .header {
-            display: inline-block;
-            padding: 15px 15px 15px 15px;
-            border-radius: 10px;
-            box-shadow: 0 0 8px #c3c3c373;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(195, 195, 195, 0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #ffffff;
+            transition: transform 0.3s ease;
         }
-
+        .header:hover {
+            transform: scale(1.02);
+        }
         .wordTable {
+            margin: 20px auto; 
+            box-shadow: 0 0 15px rgba(195, 195, 195, 0.5);
+            border-radius: 12px;
+            overflow: hidden; 
+            background-color: #ffffff;
+        }
+        .pagination-container {
+            display: flex;
+            justify-content: center;
             margin-top: 20px;
-            margin-left: 96px;
-            margin-right: 96px;
-            box-shadow: 0 0 10px #c3c3c373;
-            border-radius: 10px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            flex-wrap: wrap; /* 允许换行 */
         }
-
-        .header .is-bg {
-            border-radius: 10px;
-            font-size: medium;
-            border: 1px solid white;
-            justify-content: flex-end;
+        .btn {
+            transition: background-color 0.3s, transform 0.3s;
+            border-radius: 8px;
+            margin: 5px; /* 添加间距 */
         }
-
-        .header .is-dark {
+        .btn:hover {
             background-color: #e3bc8a;
+            transform: scale(1.05);
         }
-
-        .is-white {
-            background-color: white;
-        }
-
-        .skip {
-            display: inline-block;
-            float: right;
-            margin-right: 96px;
-        }
-
+        .fixed-column { width: 5%; }
+        .word-column { width: 35%; }
+        .interpretation-column { width: 60%; }
         @media (max-width: 500px) {
-            .wordTable {
-                margin-left: 0;
-                margin-right: 0;
-            }
-
-            .container {
-                padding-left: 0;
-                padding-right: 0;
-            }
-
-            .skip {
-                margin-right: 0;
+            .wordTable, .container { margin: 0; }
+            .interpretation-column {
+                word-wrap: break-word; 
+                white-space: normal; 
             }
         }
     </style>
 </head>
 <body>
 
-<nav class="navbar navbar-default" style="box-shadow: 1px 1px 2px #c3c3c373;background-color: white;">
-    <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">
-
-            </a>
-        </div>
-
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav navbar-right">
-                <li>
-                    <a href="#">
-                        <i class="fa fa-home fa-2x" aria-hidden="true"></i>
-                    </a>
-                </li>
-                <!-- 跳转到AI界面 -->
-                 <li>
-                    <a href="#">
-                        <span class="fa-stack fa-1x">
+<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    <nav class="navbar navbar-default">
+        <ul class="nav navbar-nav">
+            <li>
+                <a href="#" aria-label="主页">
+                    <i class="fa fa-home fa-2x" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right"> <!-- 移除大屏幕限制 -->
+            <li>
+                <a href="#" aria-label="AI助手">
+                    <span class="fa-stack fa-1x">
                         <i class="fa fa-circle fa-stack-2x" aria-hidden="true"></i>
-                            <i class="fa fa-stack-1x" style="color: white;">AI</i> 
-                        </span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        <i class="fa fa-user-circle fa-2x" aria-hidden="true"></i>
-                    </a>
-                </li>
-            </ul>
-        </div><!-- /.navbar-collapse -->
-    </div><!-- /.container-fluid -->
-</nav>
-
-<div class="container clearfix">
-    <div class="col-md-10 col-md-offset-1 header"
-         style="justify-content: space-between;display: flex;padding: 10px 10px 10px 15px;">
-        <div class="fa-stack fa-lg" style="justify-content: center;">
-            <a href="{% url 'book_list' %}" style="color: #505050;">
-                <i class="fa fa-reply" aria-hidden="true"></i>
-            </a>
-        </div>
-        <div style="display: flex;">
-            <button class="is-button is-bg is-dark" style="width: 58px; margin-left: 5px; padding: 0.3rem 0.8rem;"
-                    onclick="clickWord(this)">单词
-            </button>
-            <button class="is-button is-bg is-dark" style="width: 58px; margin-left: 5px; padding: 0.3rem 0.8rem;"
-                    onclick="clickPhonetic(this)">音标
-            </button>
-            <button class="is-button is-bg is-dark" style="width: 58px; margin-left: 5px; padding: 0.3rem 0.8rem;"
-                    onclick="clickInterpretation(this)">释义
-            </button>
-        </div>
-    </div>
+                        <i class="fa fa-stack-1x" style="color: white;">AI</i>
+                    </span>
+                </a>
+            </li>
+            <li>
+                <a href="#" aria-label="用户中心">
+                    <i class="fa fa-user-circle fa-2x" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
 </div>
 
 <div class="container">
+    <div class="header text-center" style="max-width: 1200px; margin: 0 auto; flex-direction: column; align-items: center;">
+        <a href="{% url 'book_list' %}" class="btn btn-link" style="color: #333333; padding: 5px; margin-bottom: 10px;">
+            <i class="fa fa-reply fa-2x" aria-hidden="true"></i>
+        </a>
+        <h2 style="margin-top: 10px; color: #333333; font-weight: bold; font-size: 1.5em;">{{ book.bk_name }}</h2>
+        <div class="btn-group" role="group" style="display: flex; flex-wrap: wrap; justify-content: center;">
+            <button class="btn btn-warning" onclick="toggleVisibility('word', this)">单词</button>
+            <button class="btn btn-warning" onclick="toggleVisibility('phonetic', this)">音标</button>
+            <button class="btn btn-warning" onclick="toggleVisibility('interpretation', this)">释义</button>
+        </div>
+    </div>
+
     <div class="wordTable">
         <table class="table table-hover" id="myTable">
             <thead>
-            <tr>
-                <th>#</th>
-                <th>单词</th>
-                <th>释义</th>
-            </tr>
-            </thead>
-            {% for word_detail in page_obj %}
-                <tbody>
                 <tr>
-                    <th scope="row" id="number" style="line-height: 70px"></th>
-                    <td>
-                        <div class="is-word" style="font-size: large;color: #485fc7;">
-                            {{ word_detail.word.vc_vocabulary }}
-                        </div>
-                        <div class="is-phonetic">
-                            音标: {{ word_detail.phonetic_uk }}
-                        </div>
-                        <!-- <div>
-                            美音: {{ word_detail.phonetic_us }}
-                        </div> -->
-                    </td>
-                    <td class="is-interpretation">
-                        {% if word_detail.translations %}
-                            {% for translation in word_detail.translations %}
-                                <div>
-                                    {{ translation }}
-                                </div>
-                            {% endfor %}
-                        {% else %}
-                            <div>
-                                暂无翻译
-                            </div>
-                        {% endif %}
-                    </td>
+                    <th class="fixed-column">#</th>
+                    <th class="word-column">单词</th>
+                    <th class="interpretation-column">释义</th>
                 </tr>
+            </thead>
+            <tbody>
+                {% for word_detail in page_obj %}
+                    <tr>
+                        <th scope="row">{{ forloop.counter0|add:page_obj.start_index }}</th>
+                        <td class="word-column">
+                            <div class="is-word" style="font-size: large; color: #485fc7;">{{ word_detail.word.vc_vocabulary }}</div>
+                            <div class="is-phonetic">{{ word_detail.phonetic_uk }}</div>
+                        </td>
+                        <td class="interpretation-column is-interpretation">
+                            {% if word_detail.translations %}
+                                {% for translation in word_detail.translations %}
+                                    <div>{{ translation }}</div>
+                                {% endfor %}
+                            {% else %}
+                                <div>暂无翻译</div>
+                            {% endif %}
+                        </td>
+                    </tr>
                 {% empty %}
-                <tr>没有单词信息</tr>
-                </tbody>
-            {% endfor %}
+                    <tr><td colspan="3">没有单词信息</td></tr>
+                {% endfor %}
+            </tbody>
         </table>
     </div>
-</div>
 
-<div class="container">
-    <div class="bs-example" data-example-id="simple-button-group">
-        <div class="btn-group clearfix skip" role="group" aria-label="Basic example">
+    <div class="pagination-container text-center">
+        <div class="btn-group" role="group" aria-label="翻页控制">
             {% if page_obj.has_previous %}
-                <a href="{% url 'word_list' index=index %}?page={{ page_obj.previous_page_number }}">
-                    <button type="button" class="btn btn-default">
-                        上一页
-                    </button>
-                </a>
+                <a href="{% url 'word_list' index=index %}?page={{ page_obj.previous_page_number }}" class="btn btn-primary">上一页</a>
+            {% else %}
+                <button class="btn btn-primary" disabled>上一页</button>
             {% endif %}
-            <span class="current">
-                    <button type="button" class="btn btn-default">
-                        第 {{ page_obj.number }} 页，共 {{ page_obj.paginator.num_pages }} 页
-                    </button>
-                </span>
             {% if page_obj.has_next %}
-                <a href="{% url 'word_list' index=index %}?page={{ page_obj.next_page_number }}">
-                    <button type="button" class="btn btn-default">
-                        下一页
-                    </button>
-                </a>
+                <a href="{% url 'word_list' index=index %}?page={{ page_obj.next_page_number }}" class="btn btn-primary">下一页</a>
             {% endif %}
         </div>
+        <div class="current" style="display: inline-flex; align-items: center; margin: 0 5px;">
+            <input type="number" id="pageInput" min="1" max="{{ page_obj.paginator.num_pages }}" placeholder="页数" class="form-control" style="width: 100px; margin: 0 5px;"/>
+            <button class="btn btn-success" onclick="jumpToPage()">跳转</button>
+        </div>
+        <div style="margin-top: 10px; color: #333333; font-weight: bold;">
+            当前页: {{ page_obj.number }} / {{ page_obj.paginator.num_pages }} 页
+        </div>
     </div>
-</div>
-
-
-<script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
-<script src="{% static 'plugins/bootstrap-3.4.1/js/bootstrap.js' %}"></script>
-
-<script>
-    //将数据插入表格
-    $(function () {
-        const table = document.getElementById('myTable');
-        const rows = table.getElementsByTagName('tr');
-        for (let i = 1; i < rows.length; i++) {
-            rows[i].cells[0].innerText = i;
+    
+    <script>
+        function jumpToPage() {
+            var pageInput = document.getElementById('pageInput');
+            var page = parseInt(pageInput.value, 10);
+            var maxPages = {{ page_obj.paginator.num_pages }};
+            if (isNaN(page) || page < 1 || page > maxPages) {
+                alert('请输入有效的页码');
+                pageInput.value = ''; // 清空输入框
+                return;
+            }
+            window.location.href = "{% url 'word_list' index=index %}?page=" + page;
         }
-    })
+    </script>
 
-    //点击隐藏单词
-    function clickWord(self) {
-        const isHide = $(self).hasClass("is-dark");
-        if (isHide) {
-            $(self).removeClass("is-dark");//背景色删除
-            $(self).addClass("is-white");//背景色改成白色
-            $(".is-word").hide();//隐藏表格的文本
-        } else {
-            $(self).addClass("is-dark");//背景色添加
-            $(".is-word").show();//显示表格的文本
-        }
-    }
+    <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap-3.4.1/js/bootstrap.js' %}"></script>
 
-    //点击隐藏音标
-    function clickPhonetic(self) {
-        const isHide = $(self).hasClass("is-dark");
-        if (isHide) {
-            $(self).removeClass("is-dark");
-            $(self).addClass("is-white");
-            $(".is-phonetic").hide()
-        } else {
-            $(self).addClass("is-dark")
-            $(".is-phonetic").show();
-        }
-    }
+    <script>
+        $(function () {
+            const rows = document.querySelectorAll('#myTable tr');
+            rows.forEach((row, index) => {
+                if (index > 0) row.cells[0].innerText = index + (page_obj.number - 1) * page_obj.paginator.per_page; // 设置行号
+            });
+        });
 
-    //点击隐藏释义
-    function clickInterpretation(self) {
-        const isHide = $(self).hasClass("is-dark");
-        if (isHide) {
-            $(self).removeClass("is-dark");
-            $(self).addClass("is-white");
-            $(".is-interpretation").hide();
-        } else {
-            $(self).addClass("is-dark")
-            $(".is-interpretation").show();
+        function toggleVisibility(type, button) {
+            const isHidden = $(button).hasClass("is-dark");
+            $(button).toggleClass("is-dark is-white");
+            $(`.is-${type}`).toggle(isHidden);
         }
-    }
-</script>
+    </script>
 
 </body>
 </html>

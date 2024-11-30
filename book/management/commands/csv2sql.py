@@ -50,18 +50,9 @@ class Command(BaseCommand):
             books = [
                 Book(
                     bk_id=row['bk_id'],
-                    bk_parent_id=row['bk_parent_id'],
-                    bk_level=row['bk_level'],
-                    bk_order=row['bk_order'],
                     bk_name=row['bk_name'],
                     bk_item_num=row['bk_item_num'],
-                    bk_author=row['bk_author'],
-                    bk_book=row['bk_book'],
-                    bk_comment=row['bk_comment'],
-                    bk_orgnization=row['bk_orgnization'],
-                    bk_publisher=row['bk_publisher'],
-                    bk_version=row['bk_version'],
-                    bk_flag=row['bk_flag']
+                    bk_author=row['bk_author']
                 ) for _, row in df_book.iterrows()
             ]
             Book.objects.bulk_create(books)
@@ -75,10 +66,7 @@ class Command(BaseCommand):
                     vc_id=row['vc_id'],
                     vc_vocabulary=row['vc_vocabulary'],
                     vc_phonetic_uk=row['vc_phonetic_uk'],
-                    vc_phonetic_us=row['vc_phonetic_us'],
-                    vc_frequency=row['vc_frequency'],
-                    vc_difficulty=row['vc_difficulty'],
-                    vc_acknowledge_rate=row['vc_acknowledge_rate']
+                    vc_phonetic_us=row['vc_phonetic_us']
                 ) for _, row in df_word.iterrows()
             ]
             Word.objects.bulk_create(words)
@@ -104,10 +92,7 @@ class Command(BaseCommand):
                 RelationBookWord(
                     bv_id=row['bv_id'],
                     bv_book_id=book_dict[row['bv_book_id']],
-                    bv_voc_id=word_dict[row['bv_voc_id']],
-                    bv_flag=row['bv_flag'],
-                    bv_tag=row['bv_tag'],
-                    bv_order=row['bv_order']
+                    bv_voc_id=word_dict[row['bv_voc_id']]
                 ) for _, row in df_relation.iterrows() if row['bv_book_id'] in book_dict and row['bv_voc_id'] in word_dict
             ]
             RelationBookWord.objects.bulk_create(relations)
