@@ -7,6 +7,11 @@ pip install -r requirements.txt
 ```
 ## 导入数据库
 ```
+python manage.py makemigrations
+python manage.py migrate
+```
+从csv导入单词书进数据库
+```
 python manage.py csv2sql --add
 ```
 这一步骤大概要花1分钟
