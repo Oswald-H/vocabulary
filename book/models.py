@@ -2,10 +2,9 @@ from django.db import models
 
 
 class Book(models.Model):
-    bk_id = models.CharField(max_length=255, unique=True)  # 添加唯一性约束
+    bk_id = models.CharField(max_length=255, unique=True)
     bk_name = models.CharField(max_length=255)
     bk_item_num = models.IntegerField()
-    bk_author = models.CharField(max_length=255)
 
     def __str__(self):
         return self.bk_name
