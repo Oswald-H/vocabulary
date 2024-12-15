@@ -1,18 +1,18 @@
+import random
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_protect,csrf_exempt
 from django.db.models import Case, When
+from django.http import JsonResponse
 
 from .models import Book, RelationBookWord, Word, WordTranslation
-
-
 
 
 @csrf_protect
 def book_list(request):
     book_names = [
         "TOEFL托福词汇正序版",
-        "TOEFL托福词汇乱序版", 
+        "TOEFL托福词汇乱序版",
         "四级词汇正序版",
         "四级词汇乱序版",
         "六级词汇正序版",
@@ -46,7 +46,7 @@ def word_list(request, index):
     book_names = [
         "TOEFL托福词汇正序版",
         "TOEFL托福词汇乱序版",
-        "四级词汇正序版", 
+        "四级词汇正序版",
         "四级词汇乱序版",
         "六级词汇正序版",
         "六级词汇乱序版",
@@ -64,7 +64,7 @@ def word_list(request, index):
             return redirect("book_list")
     except ValueError:
         return redirect("book_list")
-    
+
     book = book_list[index]
 
     # 获取该书籍下所有单词的关联记录，只查询一次获取所需的word信息
@@ -79,7 +79,7 @@ def word_list(request, index):
     translations = WordTranslation.objects.filter(
         word_id__in=word_ids
     ).values_list('word_id', 'translation')
-    
+
     # 构建翻译字典
     word_translations = {}
     for word_id, translation in translations:
@@ -107,3 +107,97 @@ def word_list(request, index):
         "page_obj": page_obj,
         "index": index + 1
     })
+
+
+def word_write(request, index):
+    book_names = [
+        "TOEFL托福词汇正序版",
+        "TOEFL托福词汇乱序版",
+        "四级词汇正序版",
+        "四级词汇乱序版",
+        "六级词汇正序版",
+        "六级词汇乱序版",
+    ]
+
+    book_list = Book.objects.filter(bk_name__in=book_names).distinct().annotate(
+        order=Case(
+            *[When(bk_name=name, then=order) for order, name in enumerate(book_names)]
+        )
+    ).order_by('order')
+
+    try:
+        index = int(index) - 1
+        if not (0 <= index < len(book_list)):
+            return redirect("book_list")
+    except ValueError:
+        return redirect("book_list")
+
+    book = book_list[index]
+
+    # 获取该书籍下所有单词的关联记录，只查询一次获取所需的word信息
+    relation_book_word_list = RelationBookWord.objects.select_related('bv_voc_id').filter(
+        bv_book_id=book
+    )
+
+    # 获取所有单词ID
+    word_ids = [relation.bv_voc_id.id for relation in relation_book_word_list]
+
+    # 批量获取单词翻译，使用values_list减少数据传输
+    translations = WordTranslation.objects.filter(
+        word_id__in=word_ids
+    ).values_list('word_id', 'translation')
+
+    # 构建翻译字典
+    word_translations = {}
+    for word_id, translation in translations:
+        if word_id not in word_translations:
+            word_translations[word_id] = []
+        word_translations[word_id].append(translation)
+
+    # 组装单词详情，使用已经通过select_related获取的word信息
+    word_details = []
+    for relation in relation_book_word_list:
+        word = relation.bv_voc_id  # 直接使用已经获取的word对象
+        word_details.append({
+            'word': word,
+            'phonetic_uk': word.vc_phonetic_uk,
+            'translations': word_translations.get(word.id, [])
+        })
+
+    # 分页
+    page = request.GET.get("page", 1)
+    paginator = Paginator(word_details, 20)
+    page_obj = paginator.get_page(page)
+
+    # 获取当前页的单词列表
+    words_on_page = list(page_obj.object_list)
+
+    # 获取当前单词索引
+    current_word_index = request.session.get(f'current_word_index_{page}', 0)
+
+    # 如果当前单词索引超出范围，则重置为0
+    if current_word_index >= len(words_on_page):
+        current_word_index = 0
+        request.session[f'current_word_index_{page}'] = current_word_index
+
+    # 获取当前单词
+    random_word = words_on_page[current_word_index] if words_on_page else None
+
+    return render(request, 'book/word_write.html', {
+        "book": book,
+        "page_obj": page_obj,
+        "index": index + 1,
+        "random_word": random_word,
+        "current_index": current_word_index,
+        "total_count": len(words_on_page),
+        "next_url": f"?page={page}",
+    })
+
+@csrf_exempt
+def update_current_word_index(request):
+    if request.method == 'POST':
+        page = request.POST.get('page')
+        current_word_index = request.POST.get('current_word_index')
+        request.session[f'current_word_index_{page}'] = int(current_word_index)
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'error'})
