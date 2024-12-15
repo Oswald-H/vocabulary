@@ -1,0 +1,172 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>单词拼写 - {{ book.bk_name }}</title>
+    <link rel="stylesheet" href="{% static 'plugins/bootstrap-3.4.1/css/bootstrap.css' %}"/>
+    <link rel="stylesheet" href="{% static 'plugins/font-awesome-4.7.0/css/font-awesome.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/word_write.css' %}"/>
+</head>
+
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <ul class="nav navbar-nav">
+            <li><a href="#" aria-label="主页" title="返回主页"><i class="fa fa-home" aria-hidden="true"></i></a></li>
+            <li><a href="{% url 'book_list' %}" aria-label="词书列表" title="词书列表"><i class="fa fa-book"
+                                                                                          aria-hidden="true"></i></a>
+            </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="#" aria-label="AI助手" title="AI助手"><i class="fa fa-robot" aria-hidden="true"
+                                                                  style="font-size: 1.2em;">AI</i></a></li>
+            <li><a href="#" aria-label="用户中心" title="用户中心"><i class="fa fa-user-circle" aria-hidden="true"></i></a>
+            </li>
+            <li><a href="#" onclick="toggleTheme()" class="theme-toggle" aria-label="切换主题" title="切换主题"><i
+                    class="fa fa-moon-o" id="themeIcon" aria-hidden="true"></i></a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="write-container">
+        {% if random_word %}
+
+            <div>
+                {% for translation in random_word.translations %}
+                    {% if translation %}
+                        {{ translation }}<br>
+                    {% endif %}
+                {% empty %}
+                    暂无翻译
+                {% endfor %}
+            </div>
+            <div> {{ current_index|add:"1" }} / {{ total_count }}</div>
+            <div class="input-group">
+                <input type="text" id="userInput" class="form-control" placeholder="请输入对应的单词"
+                       aria-describedby="basic-addon1">
+            </div>
+            <div style="display: flex;gap: 5px">
+                <a href="{% url 'word_list' index=index %}?page={{ page_obj.number }}&reset_counts=true" class="btn btn-primary">返回</a>
+                <a class="btn btn-primary" onclick="showPronunciation()">提示</a>
+                <a class="btn btn-primary" onclick="checkWord()">确认</a>
+            </div>
+            <div id="pronunciation"
+                 style="visibility: hidden;justify-content: center">{{ random_word.phonetic_uk }}</div>
+            <div id="word" style="visibility: hidden;justify-content: center">{{ random_word.word.vc_vocabulary }}</div>
+            <div id="resultMessage" style="color: red;"></div>
+            <div class="score">
+                <strong>正确数:</strong> <span id="correctCount">{{ correct_count }}</span>
+                <strong>错误数:</strong> <span id="incorrectCount">{{ incorrect_count }}</span>
+            </div>
+        {% else %}
+            <p>没有找到单词</p>
+        {% endif %}
+    </div>
+</div>
+
+<script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+<script src="{% static 'plugins/bootstrap-3.4.1/js/bootstrap.js' %}"></script>
+<script src="{% static 'js/word_write.js' %}"></script>
+<script>
+    let correctCount = {{ correct_count }};
+    let incorrectCount = {{ incorrect_count }};
+
+    function checkWord() {
+        const userInput = document.getElementById('userInput').value.trim();
+        const actualWord = '{{ random_word.word.vc_vocabulary }}';
+        const resultMessage = document.getElementById('resultMessage');
+        const correctCountElement = document.getElementById('correctCount');
+        const incorrectCountElement = document.getElementById('incorrectCount');
+
+        if (userInput === actualWord) {
+            correctCount++;
+            resultMessage.style.color = 'green';
+            resultMessage.textContent = '正确！';
+        } else {
+            incorrectCount++;
+            resultMessage.style.color = 'red';
+            resultMessage.textContent = '错误！';
+        }
+
+        correctCountElement.textContent = correctCount;
+        incorrectCountElement.textContent = incorrectCount;
+
+         // 保存正确数和错误数到会话
+        saveCounts().then(() => {
+            showNextWord();
+        }).catch(error => {
+            console.error('保存正确数和错误数时出错:', error);
+        });
+    }
+
+    function saveCounts() {
+        return new Promise((resolve, reject) => {
+            var currentPage = new URLSearchParams(window.location.search).get('page') || 1;
+            var correctCountKey = `correct_count_${currentPage}`;
+            var incorrectCountKey = `incorrect_count_${currentPage}`;
+
+            $.ajax({
+                url: "{% url 'save_counts' %}",
+                type: "POST",
+                data: {
+                    'page': currentPage,
+                    'correct_count': correctCount,
+                    'incorrect_count': incorrectCount,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function (response) {
+                    console.log('正确数和错误数保存成功:', response);
+                    resolve();
+                },
+                error: function (xhr, status, error) {
+                    console.error('正确数和错误数保存失败:', status, error);
+                    reject(error);
+                }
+            });
+        });
+    }
+
+    function showNextWord() {
+        var currentPage = new URLSearchParams(window.location.search).get('page') || 1;
+        var currentWordIndex = {{ current_index }};
+        var totalCount = {{ total_count }};
+
+        // 增加当前单词索引
+        currentWordIndex += 1;
+
+        // 如果当前单词索引超出范围，则重置为0
+        if (currentWordIndex >= totalCount) {
+            currentWordIndex = 0;
+            window.location.href = `{% url 'word_list' index=index %}?page=${currentPage}`;
+            return;
+        }
+
+        // 更新会话中的当前单词索引
+        $.ajax({
+            url: "{% url 'update_current_word_index' %}",
+            type: "POST",
+            data: {
+                'page': currentPage,
+                'current_word_index': currentWordIndex,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function (response) {
+                // 刷新页面以显示下一个单词
+                window.location.reload();
+            },
+            error: function (xhr, status, error) {
+                console.error('更新当前单词索引失败:', status, error);
+            }
+        });
+    }
+</script>
+</body>
+</html>

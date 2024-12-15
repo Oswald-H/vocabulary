@@ -102,6 +102,11 @@ def word_list(request, index):
     paginator = Paginator(word_details, 20)
     page_obj = paginator.get_page(page)
 
+    # 清除相关会话变量
+    request.session.pop(f'correct_count_{page}', None)
+    request.session.pop(f'incorrect_count_{page}', None)
+    request.session.pop(f'current_word_index_{page}', None)
+
     return render(request, "book/word_list.html", {
         "book": book,
         "page_obj": page_obj,
@@ -173,15 +178,34 @@ def word_write(request, index):
     words_on_page = list(page_obj.object_list)
 
     # 获取当前单词索引
-    current_word_index = request.session.get(f'current_word_index_{page}', 0)
+    #current_word_index = request.session.get(f'current_word_index_{page}', 0)
+    session_key = f'current_word_index_{page}'
+    current_word_index = request.session.get(session_key, 0)
 
     # 如果当前单词索引超出范围，则重置为0
     if current_word_index >= len(words_on_page):
         current_word_index = 0
-        request.session[f'current_word_index_{page}'] = current_word_index
-
+        #request.session[f'current_word_index_{page}'] = current_word_index
+        request.session[session_key] = current_word_index
     # 获取当前单词
     random_word = words_on_page[current_word_index] if words_on_page else None
+
+
+    # 初始化正确数和错误数
+    correct_count_key = f'correct_count_{page}'
+    incorrect_count_key = f'incorrect_count_{page}'
+
+    # 检查是否有新的请求参数来重置计数
+    if request.GET.get('reset_counts', 'false') == 'true':
+        correct_count = 0
+        incorrect_count = 0
+        current_word_index = 0
+        request.session[correct_count_key] = correct_count
+        request.session[incorrect_count_key] = incorrect_count
+        request.session[session_key] = current_word_index
+    else:
+        correct_count = request.session.get(correct_count_key, 0)
+        incorrect_count = request.session.get(incorrect_count_key, 0)
 
     return render(request, 'book/word_write.html', {
         "book": book,
@@ -191,13 +215,36 @@ def word_write(request, index):
         "current_index": current_word_index,
         "total_count": len(words_on_page),
         "next_url": f"?page={page}",
+        "correct_count": correct_count,
+        "incorrect_count": incorrect_count,
     })
+
+@csrf_exempt
+def save_counts(request):
+    if request.method == 'POST':
+        page = request.POST.get('page')
+        correct_count = request.POST.get('correct_count')
+        incorrect_count = request.POST.get('incorrect_count')
+
+        correct_count_key = f'correct_count_{page}'
+        incorrect_count_key = f'incorrect_count_{page}'
+
+        request.session[correct_count_key] = int(correct_count)
+        request.session[incorrect_count_key] = int(incorrect_count)
+
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'error'})
 
 @csrf_exempt
 def update_current_word_index(request):
     if request.method == 'POST':
         page = request.POST.get('page')
         current_word_index = request.POST.get('current_word_index')
-        request.session[f'current_word_index_{page}'] = int(current_word_index)
+        #request.session[f'current_word_index_{page}'] = int(current_word_index)
+        session_key = f'current_word_index_{page}'
+        request.session[session_key] = int(current_word_index)
         return JsonResponse({'status': 'success'})
     return JsonResponse({'status': 'error'})
+
+
+
